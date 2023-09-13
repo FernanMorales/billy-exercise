@@ -1,6 +1,6 @@
 # Billy Coding Exercise
 
-this project consists of a small api that returns events and related smart contracts information
+this project consists of a small api in Node.js/Express.js/Typescript that returns events and related smart contracts information
 
 ## Getting started
 
