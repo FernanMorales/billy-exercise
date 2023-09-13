@@ -1,0 +1,251 @@
+{
+	"components": {
+		"examples": {},
+		"headers": {},
+		"parameters": {},
+		"requestBodies": {},
+		"responses": {},
+		"schemas": {
+			"TicketCollection": {
+				"properties": {
+					"collectionName": {
+						"type": "string"
+					},
+					"scAddress": {
+						"type": "string"
+					},
+					"collectionAddress": {
+						"type": "string"
+					},
+					"pricePerToken": {
+						"type": "number",
+						"format": "double"
+					},
+					"maxMintPerUser": {
+						"type": "number",
+						"format": "double"
+					},
+					"saleSize": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"collectionName",
+					"scAddress",
+					"collectionAddress",
+					"pricePerToken",
+					"maxMintPerUser",
+					"saleSize"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"Event": {
+				"properties": {
+					"eventId": {
+						"type": "number",
+						"format": "double"
+					},
+					"title": {
+						"type": "string"
+					},
+					"startDatetime": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"endDatetime": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"address": {
+						"type": "string"
+					},
+					"locationName": {
+						"type": "string"
+					},
+					"totalTicketsCount": {
+						"type": "number",
+						"format": "double"
+					},
+					"assetUrl": {
+						"type": "string"
+					},
+					"lineUp": {
+						"items": {
+							"type": "string"
+						},
+						"type": "array"
+					},
+					"ticketCollections": {
+						"items": {
+							"$ref": "#/components/schemas/TicketCollection"
+						},
+						"type": "array"
+					}
+				},
+				"required": [
+					"eventId",
+					"title",
+					"startDatetime",
+					"endDatetime",
+					"address",
+					"locationName",
+					"totalTicketsCount",
+					"assetUrl",
+					"lineUp",
+					"ticketCollections"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"UpdatableFields": {
+				"properties": {
+					"eventTitle": {
+						"type": "string"
+					},
+					"lineUp": {
+						"items": {
+							"type": "string"
+						},
+						"type": "array"
+					},
+					"assetUrl": {
+						"type": "string"
+					},
+					"collectionName": {
+						"type": "string"
+					}
+				},
+				"type": "object",
+				"additionalProperties": false
+			}
+		},
+		"securitySchemes": {}
+	},
+	"info": {
+		"title": "billy-exercise",
+		"version": "1.0.0",
+		"license": {
+			"name": "ISC"
+		},
+		"contact": {}
+	},
+	"openapi": "3.0.0",
+	"paths": {
+		"/event/{id}": {
+			"get": {
+				"operationId": "GetEventById",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/Event"
+								}
+							}
+						}
+					}
+				},
+				"description": "Returns a event by id",
+				"security": [],
+				"parameters": [
+					{
+						"description": "the id of the event",
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						},
+						"example": "1"
+					}
+				]
+			},
+			"post": {
+				"operationId": "UpdateEvent",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/Event"
+								}
+							}
+						}
+					}
+				},
+				"description": "updates a event by id",
+				"security": [],
+				"parameters": [
+					{
+						"description": "the id of the event",
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						},
+						"example": "1"
+					}
+				],
+				"requestBody": {
+					"description": "the fields to update",
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/UpdatableFields",
+								"description": "the fields to update"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/events": {
+			"get": {
+				"operationId": "GetEvents",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"items": {
+										"$ref": "#/components/schemas/Event"
+									},
+									"type": "array"
+								}
+							}
+						}
+					}
+				},
+				"description": "returns a detailed list of all the events",
+				"security": [],
+				"parameters": [
+					{
+						"description": "the start time of the sale - should be in unix timestamp",
+						"in": "query",
+						"name": "start",
+						"required": false,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						},
+						"example": "1656626400"
+					}
+				]
+			}
+		}
+	},
+	"servers": [
+		{
+			"url": "/"
+		}
+	]
+}

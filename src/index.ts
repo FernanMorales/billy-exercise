@@ -1,15 +1,29 @@
-import express, { Express, Request, Response } from 'express';
+import express, { Application } from 'express';
+import morgan from 'morgan';
+import Router from './routes';
+import swaggerUi from 'swagger-ui-express';
 import dotenv from 'dotenv';
-
 dotenv.config();
 
-const app: Express = express();
-const port = process.env.PORT;
+const PORT = process.env.PORT;
 
-app.get('/', (req: Request, res: Response) => {
-  res.send('Express + TypeScript Server');
-});
+const app: Application = express();
 
-app.listen(port, () => {
-  console.log(`⚡️[server]: Server is running at http://localhost:${port}`);
+app.use(morgan('tiny'));
+app.use(express.static('public'));
+
+app.use(
+	'/docs',
+	swaggerUi.serve,
+	swaggerUi.setup(undefined, {
+		swaggerOptions: {
+			url: '/swagger.json',
+		},
+	})
+);
+
+app.use(Router);
+
+app.listen(PORT, () => {
+	console.log('Server is running on port', PORT);
 });

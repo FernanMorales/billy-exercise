@@ -1,64 +1,43 @@
+SET datestyle TO "SQL, DMY";
+
 CREATE TABLE users (
     id SERIAL PRIMARY KEY,
     name VARCHAR(50) NOT NULL,
     email VARCHAR(100) NOT NULL UNIQUE
 );
 
-/* create a table events with the following fields 
-    {
-    "eventId": id (foreign key),
-    "title": varchar,
-    "startDatetime": datetime,
-    "endDatetime": datetime,
-    "address": varchar,
-    "locationName": varchar,
-    "totalTicketsCount": integer,
-    "assetUrl": varchar,
-    "lineUp": varchar,
-*/
-
 CREATE TABLE events (
     id SERIAL PRIMARY KEY,
     title VARCHAR(100) NOT NULL UNIQUE,
-    startDatetime VARCHAR(100) NOT NULL,
-    endDatetime VARCHAR(100) NOT NULL,
+    start_date_time TIMESTAMP NOT NULL,
+    end_date_time TIMESTAMP NOT NULL,
+    location_name VARCHAR(100) NULL,
     address VARCHAR(100) NOT NULL,
-    locationName VARCHAR(100) NOT NULL,
-    totalTicketsCount INTEGER NOT NULL,
-    assetUrl VARCHAR(100) NOT NULL,
-    lineUp VARCHAR(100) NOT NULL
+    total_tickets_count INTEGER NOT NULL,
+    max_tickets_per_user INTEGER NOT NULL,
+    sale_start_date DATE NOT NULL,
+    lineup VARCHAR(100) NULL,
+    asset_url VARCHAR(100) NOT NULL
 );
-
-/* create a table contracts with the following fields
-    "id": id primary key,
-    "eventId": id (foreign key),
-    "collectionName": varchar,
-    "crowdsale": varchar,
-    "collection": varchar,
-    "multisig": varchar,
-    "isPresale": boolean,
-    "metadata": ,
-    "pricePerToken": integer,
-    "maxMintPerUser": integer,
-    "saleSize": integer,
-    "sale_currency": id foreign key
-    "start_time": date,
-    "end_time": date
-*/
 
 CREATE TABLE contracts (
     id SERIAL PRIMARY KEY,
-    eventId INTEGER NOT NULL,
-    collectionName VARCHAR(100) NOT NULL,
-    crowdsale VARCHAR(100) NOT NULL,
-    collection VARCHAR(100) NOT NULL,
-    multisig VARCHAR(100) NOT NULL,
-    isPresale BOOLEAN NOT NULL,
-    metadata VARCHAR(100) NOT NULL,
-    pricePerToken INTEGER NOT NULL,
-    maxMintPerUser INTEGER NOT NULL,
-    saleSize INTEGER NOT NULL,
-    sale_currency VARCHAR(100) NOT NULL,
-    start_time VARCHAR(100) NOT NULL,
-    end_time VARCHAR(100) NOT NULL
+    event_id INTEGER NOT NULL,
+    collection_name VARCHAR(100) NOT NULL,
+    smart_contract jsonb NOT NULL,
+    CONSTRAINT fk_event_id
+      FOREIGN KEY(event_id)
+	    REFERENCES events(id)
+        ON DELETE CASCADE
 );
+
+COPY events FROM '/postgresql/data_files/organizers-data.csv' DELIMITER ',' CSV HEADER;
+
+\set content `cat /postgresql/data_files/smart-contracts-data.json`
+CREATE TEMPORARY table t (j jsonb);
+INSERT into t values(:'content');
+create TEMPORARY table t2 as select jsonb_array_elements(j) from t;
+
+INSERT INTO contracts (event_id, collection_name, smart_contract)
+    select CAST(jsonb_array_elements->>'event_id' as integer), jsonb_array_elements->>'collection_name', CAST(jsonb_array_elements->'smart_contract' as jsonb) from t2
+
