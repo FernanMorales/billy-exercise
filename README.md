@@ -1,6 +1,6 @@
 # Billy Coding Exercise
 
-this project consists of a small api that returns events and related smart contracts information 
+this project consists of a small api that returns events and related smart contracts information
 
 ## Getting started
 
@@ -47,12 +47,11 @@ You can do both destroy and start the container with:
 npm run db:restart
 ```
 
-in case you need to destroy the container and remove the associated image:
+in case you need to destroy the container, remove and rebuild the associated image:
 
 ```shell
 npm run db:reinstall
 ```
-
 
 ## Testing the api
 
@@ -84,12 +83,12 @@ Once those steps are completed and the server is up and running, the swagger wil
 
 - GET /events?start={unix timestamp}
 
-    Returns a list of all the events in the database with their associated tickets. The list can be filtered with a parameter "start" corresponding to the event sale start time in its tickets (in a unix timestamp format)
+  Returns a list of all the events in the database with their associated tickets. The list can be filtered with a parameter "start" corresponding to the event sale start time in its tickets (in a unix timestamp format)
 
 - GET /event/{id}
 
-    Returns the event corresponding to the Id provided in the url
+  Returns the event corresponding to the Id provided in the url
 
 - POST /event/{id}
 
-    Updates an event and its tickets
+  Updates an event and its tickets
